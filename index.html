@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Daniel Gur Arye - UX/UI Designer Portfolio showcasing digital experiences and design solutions"/>
+    <title>Daniel Gur Arye • UX/UI Designer</title>
+    <!-- GSAP Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #bcbcbc;
+            --secondary-color: #b1b1b1;
+            --background-color: #0a0a0a;
+            --display-color: #4365ff;
+            --surface-color: #111;
+            --text-primary: #fff;
+            --text-secondary: #888;
+            --transition-speed: 0.3s;
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: var(--background-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* Loader */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader-text {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 200;
+            letter-spacing: 8px;
+            background: linear-gradient(90deg, var(--text-primary), var(--primary-color));
+            -webkit-background-clip1: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 100%;
+            animation: gradient 2s infinite alternate;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* Navigation */
+        .nav-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        nav {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            position: relative;
+            cursor: pointer;
+            transition: color var(--transition-speed) ease;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width var(--transition-speed) ease;
+        }
+
+        .logo:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger Toggle (מופיע רק במסכים קטנים) */
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--primary-color);
+        }
+
+        /* אייקון המבורגר */
+        .menu-toggle svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem;
+            transition: color var(--transition-speed) ease;
+        }
+
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width var(--transition-speed) ease;
+        }
+
+        .menu-item:hover::after {
+            width: 100%;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 max(10%, 2rem);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            font-weight: 300;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* Projects Section */
+        .projects-section {
+            padding: 100px max(8vw, 2rem);
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip2: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
+            gap: 4rem;
+        }
+
+        .project-card {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: var(--surface-color);
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .project-image {
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.05);
+        }
+
+        .project-content {
+            padding: 2rem;
+        }
+
+        .project-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1rem;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-tag {
+            background: rgba(74, 144, 226, 0.1);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .view-project-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--display-color);
+            color: var(--text-primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-project-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .view-project-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .view-project-btn:hover {
+            background: var(--secondary-color);
+            transform: translateX(5px);
+        }
+
+        /* About Me Section */
+        .about-section {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 100px max(8vw, 2rem);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .about-image {
+            flex: 1 1 100%;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+        }
+
+        .about-image img {
+            width: 40%;
+            height: 60%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .about-content {
+            flex: 1 1 400px;
+            max-width: 600px;
+        }
+
+        .about-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip3: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .about-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Skills Section */
+        .skills-section {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 100px max(8vw, 2rem);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .skill-card {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .skill-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 100px max(8vw, 2rem);
+            text-align: center;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: left;
+            position: relative;
+        }
+
+        .testimonial-text {
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color var(--transition-speed) ease;
+        }
+        .footer-link:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Cursor Effects */
+        .cursor-effect {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.5;
+            mix-blend-mode: difference;
+        }
+
+        @media (max-width: 768px) {
+            /* מציגים את המבורגר ומסתירים תפריט מלא */
+            .menu-toggle {
+                display: block;
+            }
+            .menu-items {
+                position: absolute;
+                top: 80px;
+                right: 2rem;
+                flex-direction: column;
+                background: rgba(10,10,10,0.9);
+                border-radius: var(--border-radius);
+                padding: 1rem 2rem;
+                display: none; /* מוסתרת בברירת מחדל */
+            }
+            .menu-items.menu-active {
+                display: flex;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader">
+        <div class="loader-text" aria-label="Loading">LOADING</div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-wrapper">
+        <nav>
+            <div class="logo" tabindex="0" role="button" aria-label="Home">DANIEL GUR ARYE</div>
+
+            <!-- כפתור המבורגר (מופיע רק במסכים קטנים) -->
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <!-- אפשר להחליף ל־SVG/אייקון אחר -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="menu-items" role="navigation">
+                <div class="menu-item" tabindex="0" role="button">Work</div>
+                <div class="menu-item" tabindex="0" role="button">About</div>
+                <div class="menu-item" tabindex="0" role="button">Contact</div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Crafting Digital Experiences Through Design</h1>
+            <p>UX/UI Designer specializing in creating intuitive and engaging digital solutions that enhance user experiences.</p>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section" aria-label="Featured Projects">
+            <div class="section-header">
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-subtitle">A selection of my recent work</p>
+            </div>
+
+            <div class="projects-grid">
+                <!-- Project Card 1 (דוגמה מעודכנת) -->
+                <article class="project-card" id="project-urban">
+                    <div class="project-image">
+                        <!-- החלף לקובץ תמונה משלך -->
+                        <img src="/project/Assets/Swapark.svg" alt="Urban Explorer App Interface" loading="lazy">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Urban Explorer</h3>
+                        <p class="project-description">
+                            A mobile app for city dwellers, offering curated cultural spots and local events, 
+                            optimized for a streamlined user journey and real-time community updates.
+                        </p>
+                        <div class="project-tags" aria-label="Project categories">
+                            <span class="project-tag">UX/UI Design</span>
+                            <span class="project-tag">Mobile App</span>
+                            <span class="project-tag">Local Culture</span>
+                        </div>
+                        <a href="/project/Swapark/swapark.html" class="view-project-btn" data-project="urban">
+                            View Project
+                            <span class="visually-hidden">: Urban Explorer</span>
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 2 (דוגמה מעודכנת) -->
+                <article class="project-card" id="project-greenshop">
+                    <div class="project-image">
+                        <!-- החלף לקובץ תמונה משלך -->
+                        <img src="Assets/green-shop.jpg" alt="Green Shop E-commerce Interface" loading="lazy">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Green Shop</h3>
+                        <p class="project-description">
+                            An eco-friendly e-commerce platform focusing on sustainability, 
+                            with an emphasis on user engagement and conversion-oriented UI.
+                        </p>
+                        <div class="project-tags" aria-label="Project categories">
+                            <span class="project-tag">UX/UI Design</span>
+                            <span class="project-tag">E-commerce</span>
+                            <span class="project-tag">Sustainability</span>
+                        </div>
+                        <!-- Example link to a real page -->
+                        <a href="/project/GreenShop/green-shop.html" class="view-project-btn" data-project="greenshop">
+                            View Project
+                            <span class="visually-hidden">: Green Shop</span>
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section class="about-section" id="about">
+            <div class="about-image">
+                <!-- החלף לתמונה שלך בפועל -->
+                <img src="/project/Assets/profile.jpeg" alt="Daniel Gur Arye Profile Photo">
+            </div>
+            <div class="about-content">
+                <h2 class="about-title">About Me</h2>
+                <p class="about-text">
+                    I'm Daniel Gur Arye, a UX/UI Designer driven by curiosity and a deep passion
+                    for crafting exceptional digital experiences. Over the years, I've specialized
+                    in creating user-centric interfaces that balance aesthetics, usability, and 
+                    technical feasibility.
+                    <br><br>
+                    I believe in continuous learning, iterative design processes, and thoughtful 
+                    collaboration with stakeholders to deliver products that truly resonate with 
+                    end-users. Beyond pixels and wireframes, I enjoy merging creativity with 
+                    strategic thinking to elevate brands in the digital landscape.
+                    <br><br>
+                    When I'm not designing, I spend my time exploring new technologies, refining 
+                    my animation skills with GSAP, and engaging with design communities to share 
+                    insights and learn from others. 
+                </p>
+            </div>
+        </section>
+
+        <!-- Skills & Tools Section -->
+        <section class="skills-section" id="skills">
+            <div class="section-header">
+                <h2 class="section-title">Skills & Tools</h2>
+                <p class="section-subtitle">From wireframes to high-fidelity prototypes</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">💡</div>
+                    <h3 class="skill-title">UX Research</h3>
+                    <p>Empathy mapping, user interviews, persona creation.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">⚙️</div>
+                    <h3 class="skill-title">Prototyping</h3>
+                    <p>Rapid prototyping with Figma, Sketch, Adobe XD.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🎨</div>
+                    <h3 class="skill-title">UI Design</h3>
+                    <p>Clean, modern interfaces aligned with brand identity.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🚀</div>
+                    <h3 class="skill-title">Animation</h3>
+                    <p>Engaging micro-interactions and transitions with GSAP.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section" id="testimonials">
+            <div class="section-header">
+                <h2 class="section-title">What People Say</h2>
+                <p class="section-subtitle">Feedback from collaborators and clients</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "Daniel's attention to detail and user-centric approach helped our product stand out.
+                        The final design was both beautiful and functional!"
+                    </p>
+                    <p class="testimonial-author">- Sarah W, Product Manager</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "Working with Daniel was a pleasure. He quickly grasped our goals and delivered beyond our expectations."
+                    </p>
+                    <p class="testimonial-author">- Jonathan D, Startup Founder</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "The animations added a sense of delight to our app. Daniel's design approach truly shines in the final product."
+                    </p>
+                    <p class="testimonial-author">- Emily R, Creative Director</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">© 2023 Daniel Gur Arye. All Rights Reserved.</p>
+        <div class="footer-links">
+            <!-- החלף לקישורים/רשתות חברתיות שלך בפועל -->
+            <a href="https://www.linkedin.com" class="footer-link" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.instagram.com" class="footer-link" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.behance.net" class="footer-link" target="_blank" rel="noopener">Behance</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize GSAP
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Cyberpunk trail effect animation - optimized with throttling
+        document.addEventListener('mousemove', throttle((e) => {
+            const cyberpunkTrail = document.createElement('div');
+            cyberpunkTrail.className = 'cyberpunk-trail';
+            document.body.appendChild(cyberpunkTrail);
+            cyberpunkTrail.style.left = e.clientX + 'px';
+            cyberpunkTrail.style.top = e.clientY + 'px';
+            gsap.to(cyberpunkTrail, {
+                opacity: 0,
+                scale: 2,
+                duration: 1.2,
+                ease: 'power1.out',
+                onComplete: () => {
+                    cyberpunkTrail.remove();
+                }
+            });
+        }, 50));
+
+        // Click effect animation - optimized
+        document.addEventListener('click', (e) => {
+            const clickEffect = document.createElement('div');
+            clickEffect.className = 'click-effect';
+            document.body.appendChild(clickEffect);
+            clickEffect.style.left = e.clientX + 'px';
+            clickEffect.style.top = e.clientY + 'px';
+            gsap.to(clickEffect, {
+                width: 100,
+                height: 100,
+                opacity: 0,
+                duration: 0.4,
+                ease: 'power1.out',
+                onComplete: () => {
+                    clickEffect.remove();
+                }
+            });
+        });
+
+        // Loading animation
+        window.addEventListener('load', () => {
+            const loader = document.querySelector('.loader');
+            gsap.to(loader, {
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                onComplete: () => {
+                    loader.style.display = 'none';
+                    // Animate hero section
+                    gsap.to('.hero h1', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: 0.3
+                    });
+                    gsap.to('.hero p', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: 0.5
+                    });
+                }
+            });
+        });
+
+        // Sticky Navigation
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', debounce(() => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop) {
+                gsap.to('nav', {
+                    top: '-100px',
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            } else {
+                gsap.to('nav', {
+                    top: '0',
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            }
+            lastScrollTop = scrollTop;
+        }, 100));
+
+        // Project card animations
+        const projectCards = gsap.utils.toArray('.project-card');
+        gsap.from(projectCards, {
+            opacity: 0,
+            y: 100,
+            duration: 1,
+            stagger: 0.2,
+            scrollTrigger: {
+                trigger: '.projects-section',
+                start: 'top center+=100',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // Section headers animation
+        gsap.from('.section-header', {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
+            scrollTrigger: {
+                trigger: '.section-header',
+                start: 'top center+=100'
+            }
+        });
+
+        // About section animation
+        gsap.from('.about-image', {
+            opacity: 0,
+            x: -50,
+            duration: 1,
+            scrollTrigger: {
+                trigger: '.about-section',
+                start: 'top center+=100'
+            }
+        });
+        gsap.from('.about-content', {
+            opacity: 0,
+            x: 50,
+            duration: 1,
+            scrollTrigger: {
+                trigger: '.about-section',
+                start: 'top center+=100'
+            }
+        });
+
+        // Skills cards animation
+        gsap.from('.skill-card', {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
+            stagger: 0.2,
+            scrollTrigger: {
+                trigger: '.skills-grid',
+                start: 'top center+=100'
+            }
+        });
+
+        // Testimonials animation
+        gsap.from('.testimonial-card', {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
+            stagger: 0.2,
+            scrollTrigger: {
+                trigger: '.testimonials-grid',
+                start: 'top center+=100'
+            }
+        });
+
+        // Button hover effects
+        const buttons = document.querySelectorAll('.view-project-btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                gsap.to(button, {
+                    scale: 1.05,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+            button.addEventListener('mouseleave', () => {
+                gsap.to(button, {
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // Scroll to project function
+        function scrollToProject(projectId) {
+            const projectElement = document.getElementById(projectId);
+            if (projectElement) {
+                gsap.to(window, {
+                    scrollTo: { y: projectElement, offsetY: 70 },
+                    duration: 1,
+                    ease: 'power2.out'
+                });
+            }
+        }
+
+        // Hamburger Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menuItems = document.querySelector('.menu-items');
+
+        menuToggle.addEventListener('click', () => {
+            // החלף/הוסף/הסר מחלקה לפתיחה/סגירה של התפריט
+            menuItems.classList.toggle('menu-active');
+        });
+
+        // Utility: Throttle
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // Utility: Debounce
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+    </script>
+</body>
+</html>
